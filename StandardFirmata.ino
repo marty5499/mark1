@@ -190,8 +190,10 @@ void checkDigitalInputs(void)
   if (TOTAL_PORTS > 9 && reportPINs[9]) outputPort(9, readPort(9, portConfigInputs[9]), false);
   if (TOTAL_PORTS > 10 && reportPINs[10]) outputPort(10, readPort(10, portConfigInputs[10]), false);
   if (TOTAL_PORTS > 11 && reportPINs[11]) outputPort(11, readPort(11, portConfigInputs[11]), false);
+  /*
   if (TOTAL_PORTS > 12 && reportPINs[12]) outputPort(12, readPort(12, portConfigInputs[12]), false);
   if (TOTAL_PORTS > 13 && reportPINs[13]) outputPort(13, readPort(13, portConfigInputs[13]), false);
+  */
   if (TOTAL_PORTS > 14 && reportPINs[14]) outputPort(14, readPort(14, portConfigInputs[14]), false);
   if (TOTAL_PORTS > 15 && reportPINs[15]) outputPort(15, readPort(15, portConfigInputs[15]), false);
 }
@@ -611,6 +613,7 @@ void systemResetCallback()
   }
 
   for (byte i = 0; i < TOTAL_PINS; i++) {
+    if(i==12 || i==13) continue;
     // pins with analog capability default to analog input
     // otherwise, pins default to digital output
     if (IS_PIN_ANALOG(i)) {
@@ -643,6 +646,7 @@ void systemResetCallback()
 
 void setup()
 {
+  Serial.begin(57600);
   Firmata.setFirmwareVersion(FIRMATA_MAJOR_VERSION, FIRMATA_MINOR_VERSION);
 
   Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
@@ -680,6 +684,7 @@ void loop()
     previousMillis += samplingInterval;
     /* ANALOGREAD - do all analogReads() at the configured sampling interval */
     for (pin = 0; pin < TOTAL_PINS; pin++) {
+      if(pin==12 || pin==13) continue;
       if (IS_PIN_ANALOG(pin) && pinConfig[pin] == ANALOG) {
         analogPin = PIN_TO_ANALOG(pin);
         if (analogInputsToReport & (1 << analogPin)) {
